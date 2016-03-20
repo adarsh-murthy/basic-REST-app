@@ -2,11 +2,11 @@
 //BASE SETUP
 // ==================================================================================================
 var mongoose = require('mongoose');
-mongoose.connect('mongodb://@DESKTOP-H7675D1:27017/');  //Connect to our database
+mongoose.connect('mongodb://@DESKTOP-H7675D1:27017/');  //Connect to database
 //call the packages we need
 var Object = require('./app/models/Object');
 var express = require('express');   //call express
-var app = express();    //define our app using express
+var app = express();    //define the app using express
 var bodyParser = require('body-parser');
 
 //Configure app to use bodyParser()
@@ -42,7 +42,6 @@ router.route('/objects')
 
 //create an object (accessed at POST http://localhost:8080/api/objects)
 .post(function(req,res){
-    console.log("in post: ", req.body);
     Object.create(req.body,function(err){
         if (err)
             E(req,err,res);
