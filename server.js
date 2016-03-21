@@ -2,7 +2,7 @@
 //BASE SETUP
 // ==================================================================================================
 var mongoose = require('mongoose');
-mongoose.connect('mongodb://@DESKTOP-H7675D1:27017/');  //Connect to database
+mongoose.connect('mongodb://localhost:27017/db');  //Connect to database
 //call the packages we need
 var Object = require('./app/models/Object');
 var express = require('express');   //call express
