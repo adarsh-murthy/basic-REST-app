@@ -42,10 +42,10 @@ router.route('/objects')
 
 //create an object (accessed at POST http://localhost:8080/api/objects)
 .post(function(req,res){
-    Object.create(req.body,function(err){
+    Object.create(req.body,function(err,data){
         if (err)
             E(req,err,res);
-        res.json({message: 'Object created'});
+        res.json(data);
     });
 })
 
@@ -86,7 +86,13 @@ router.route('/objects/:object_id')
         Object.collection.update({"_id" : mongoose.Types.ObjectId(req.params.object_id)}, req.body, function(err,data){
             if(err)
                 E(req,err,res);
-            res.json(data);
+            if (data == 1)
+                Object.findById(req.params.object_id,function(err,object){
+                    if (err){
+                        E(req,err,res);    
+                        }
+                    res.json(object);
+                 });
         });
         
 })
