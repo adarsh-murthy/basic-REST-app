@@ -2,11 +2,11 @@
 //BASE SETUP
 // ==================================================================================================
 var mongoose = require('mongoose');
-mongoose.connect('mongodb://localhost:27017/db');  //Connect to database
+mongoose.connect('mongodb://localhost:27017/db');  //Connect to our database
 //call the packages we need
 var Object = require('./app/models/Object');
 var express = require('express');   //call express
-var app = express();    //define the app using express
+var app = express();    //define our app using express
 var bodyParser = require('body-parser');
 
 //Configure app to use bodyParser()
@@ -42,9 +42,11 @@ router.route('/objects')
 
 //create an object (accessed at POST http://localhost:8080/api/objects)
 .post(function(req,res){
+    console.log("in post: ", req.body);
     Object.create(req.body,function(err,data){
         if (err)
             E(req,err,res);
+        
         res.json(data);
     });
 })
@@ -73,8 +75,12 @@ router.route('/objects/:object_id')
 //get the object with that id (accessed at GET...)
 .get(function(req,res){
     Object.findById(req.params.object_id,function(err,object){
+    
         if (err){
-            E(req,err,res);    
+            E(req,err,res);   
+        }
+        if (object == null){
+            res.statusCode = 404;
         }
         res.json(object);
     });
@@ -82,19 +88,41 @@ router.route('/objects/:object_id')
 
 //update the object with this id
 .put(function(req,res){
-    //use our object model to replace the object we want
-        Object.collection.update({"_id" : mongoose.Types.ObjectId(req.params.object_id)}, req.body, function(err,data){
-            if(err)
-                E(req,err,res);
-            if (data == 1)
-                Object.findById(req.params.object_id,function(err,object){
-                    if (err){
-                        E(req,err,res);    
-                        }
-                    res.json(object);
-                 });
-        });
+    var newData = req.body; 
+    if ("_id" in newData){
+        if (req.body._id == req.params.object_id){
+            console.log("IDs match");
+            //use our object model to replace the object we want
+
+            delete newData._id;
+        }
+        else {
+            res.json({message: "IDs cannot be changed"})
+        }
+    }
+    
+    Object.collection.update({"_id" : mongoose.Types.ObjectId(req.params.object_id)}, newData, function(err,data){
+        if(err){
+            console.log("while update")
+            E(req,err,res);
+            }
         
+        Object.findById(req.params.object_id,function(err,object){
+            if (err){
+
+                E(req,err,res);    
+                }
+            if (object == null){
+                res.statusCode = 404;
+                res.json({message : "Object to update does not exist"});
+                }
+            res.json(object);
+            });
+
+
+        });
+
+    
 })
 
 //delete a object with this id
