@@ -6,6 +6,6 @@ var ObjectSchema = new Schema({
 name : String,
 dob : String,
 occupation : String
-},{strict: false});
+},{strict: false, versionKey : false});
 
 module.exports = mongoose.model('Object', ObjectSchema);
