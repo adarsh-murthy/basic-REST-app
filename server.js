@@ -93,7 +93,6 @@ router.route('/objects/:object_id')
         if (req.body._id == req.params.object_id){
             console.log("IDs match");
             //use our object model to replace the object we want
-
             delete newData._id;
         }
         else {
@@ -105,24 +104,18 @@ router.route('/objects/:object_id')
         if(err){
             console.log("while update")
             E(req,err,res);
-            }
-        
+        }
         Object.findById(req.params.object_id,function(err,object){
             if (err){
-
                 E(req,err,res);    
-                }
+            }
             if (object == null){
                 res.statusCode = 404;
                 res.json({message : "Object to update does not exist"});
-                }
+            }
             res.json(object);
-            });
-
-
         });
-
-    
+    });
 })
 
 //delete a object with this id
